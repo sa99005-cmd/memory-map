@@ -222,13 +222,11 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                 scrollWheelZoom={true}
                 className="w-full h-full"
                 style={{ background: '#F9F9F5' }}
-                zoomControl={false}
             >
-                <ZoomControl position="bottomright" />
                 <MapClickHandler onMapClick={handleMapClick} onLocate={setMapInstance} />
 
                 {/* Location Button */}
-                <div className="leaflet-top leaflet-right" style={{ marginTop: '10px', marginRight: '10px', pointerEvents: 'auto', zIndex: 1000 }}>
+                <div className="leaflet-bottom leaflet-right" style={{ marginBottom: '80px', marginRight: '10px', pointerEvents: 'auto', zIndex: 1000 }}>
                     <div className="leaflet-control leaflet-bar">
                         <button
                             onClick={handleLocateMe}
