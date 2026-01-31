@@ -222,7 +222,9 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                 scrollWheelZoom={true}
                 className="w-full h-full"
                 style={{ background: '#F9F9F5' }}
+                zoomControl={false}
             >
+                <ZoomControl position="bottomright" />
                 <MapClickHandler onMapClick={handleMapClick} onLocate={setMapInstance} />
 
                 {/* Location Button */}
