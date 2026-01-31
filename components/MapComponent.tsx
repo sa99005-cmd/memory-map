@@ -215,250 +215,253 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
     };
 
     return (
-        <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-lg border-4 border-cream-white/50">
-            <MapContainer
-                center={[37.5665, 126.9780] as L.LatLngExpression}
-                zoom={3}
-                scrollWheelZoom={true}
-                className="w-full h-full"
-                style={{ background: '#F9F9F5' }}
-            >
-                <MapClickHandler onMapClick={handleMapClick} onLocate={setMapInstance} />
+        <>
+            <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-lg border-4 border-cream-white/50">
+                <MapContainer
+                    center={[37.5665, 126.9780] as L.LatLngExpression}
+                    zoom={3}
+                    scrollWheelZoom={true}
+                    className="w-full h-full"
+                    style={{ background: '#F9F9F5' }}
+                >
+                    <MapClickHandler onMapClick={handleMapClick} onLocate={setMapInstance} />
 
-                {/* Location Button */}
-                <div className="leaflet-bottom leaflet-right" style={{ marginBottom: '20px', marginRight: '10px', pointerEvents: 'auto', zIndex: 1000 }}>
-                    <div className="leaflet-control leaflet-bar">
-                        <button
-                            onClick={handleLocateMe}
-                            className="bg-white p-2 hover:bg-gray-50 text-sage-green shadow-sm flex items-center justify-center w-[34px] h-[34px]"
-                            title="내 위치로 이동"
-                        >
-                            <Crosshair size={20} />
-                        </button>
-                    </div>
-                </div>
-
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    className="map-tiles-desaturated"
-                />
-
-                {/* User Location Marker */}
-                {myLocation && (
-                    <Marker position={[myLocation.lat, myLocation.lng]} icon={userLocationIcon}>
-                        <Popup className="sage-popup">
-                            <div className="text-center p-1">
-                                <span className="font-bold text-blue-600 text-sm">내 현재 위치</span>
-                            </div>
-                        </Popup>
-                    </Marker>
-                )}
-
-                <MapController focusedPin={focusedPin} flyToLocation={flyToLocation} />
-
-                {/* Search Bar */}
-                <div className="absolute top-3 left-12 w-[calc(100%-60px)] md:top-4 md:left-[60px] md:w-[300px] z-[1000] transition-all">
-                    <div className="relative">
-                        <input
-                            type="text"
-                            placeholder="장소 검색 (예: 서울역, Paris)"
-                            className="w-full pl-10 pr-4 py-2.5 rounded-full shadow-lg border border-gray-200 focus:outline-none focus:border-sage-green focus:ring-2 focus:ring-sage-green/20 text-gray-700 bg-white/95 backdrop-blur-sm transition-all"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                        />
-                        <button
-                            onClick={handleSearch}
-                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-sage-green transition-colors"
-                        >
-                            <Search size={20} />
-                        </button>
-                        {searchQuery && (
+                    {/* Location Button */}
+                    <div className="leaflet-bottom leaflet-right" style={{ marginBottom: '20px', marginRight: '10px', pointerEvents: 'auto', zIndex: 1000 }}>
+                        <div className="leaflet-control leaflet-bar">
                             <button
-                                onClick={() => {
-                                    setSearchQuery('');
-                                    setSearchResults([]);
-                                }}
-                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                onClick={handleLocateMe}
+                                className="bg-white p-2 hover:bg-gray-50 text-sage-green shadow-sm flex items-center justify-center w-[34px] h-[34px]"
+                                title="내 위치로 이동"
                             >
-                                <X size={16} />
+                                <Crosshair size={20} />
                             </button>
-                        )}
+                        </div>
                     </div>
 
-                    {/* Search Results Dropdown */}
-                    {searchResults.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden max-h-60 overflow-y-auto">
-                            {searchResults.map((result, idx) => (
-                                <div
-                                    key={idx}
-                                    onClick={() => handleSelectLocation(result.lat, result.lon)}
-                                    className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-none flex items-start gap-3 transition-colors"
-                                >
-                                    <MapPin size={16} className="text-sage-green mt-1 flex-shrink-0" />
-                                    <div>
-                                        <div className="text-sm font-medium text-gray-800">{result.display_name.split(',')[0]}</div>
-                                        <div className="text-xs text-gray-500 line-clamp-1">{result.display_name}</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        className="map-tiles-desaturated"
+                    />
 
-
-                {/* Existing Pins */}
-                {pins.map((pin) => {
-                    // Decide which photo to show on map popup thumbnail
-                    const displayPhoto = (pin.photos && pin.photos.length > 0) ? pin.photos[0] : pin.photo;
-
-                    return (
-                        <Marker key={pin.id} position={[pin.lat, pin.lng]} icon={getPinIcon(pin.title)}>
+                    {/* User Location Marker */}
+                    {myLocation && (
+                        <Marker position={[myLocation.lat, myLocation.lng]} icon={userLocationIcon}>
                             <Popup className="sage-popup">
-                                <div className="p-2 min-w-[200px] max-w-[250px]">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h3 className="font-bold text-sage-green text-lg">{pin.title}</h3>
-                                        {onDeletePin && (
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    e.preventDefault();
-                                                    onDeletePin(pin.id);
-                                                }}
-                                                className="text-gray-400 hover:text-red-500 transition-colors p-1"
-                                                title="삭제하기"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        )}
-                                    </div>
-                                    <p className="text-gray-600 text-sm mb-2 break-keep">
-                                        <Linkify>{pin.memo}</Linkify>
-                                    </p>
-                                    {displayPhoto && (
-                                        <div className="mb-2 rounded-lg overflow-hidden max-h-[150px] relative">
-                                            <img src={displayPhoto} alt="Memory" className="w-full h-full object-cover" />
-                                            {(pin.photos && pin.photos.length > 1) && (
-                                                <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                                                    +{pin.photos.length - 1}
-                                                </span>
-                                            )}
-                                        </div>
-                                    )}
-                                    <div className="text-xs text-gray-400 text-right">{pin.date}</div>
+                                <div className="text-center p-1">
+                                    <span className="font-bold text-blue-600 text-sm">내 현재 위치</span>
                                 </div>
                             </Popup>
                         </Marker>
-                    );
-                })}
+                    )}
 
-                {/* Temporary Pin Marker (Just the icon) */}
-                {tempPin && (
-                    <Marker position={[tempPin.lat, tempPin.lng]} icon={tempIcon} />
-                )}
-            </MapContainer>
+                    <MapController focusedPin={focusedPin} flyToLocation={flyToLocation} />
 
-            {/* Creation Modal Overlay (Fixed Global Overlay) */}
-            {tempPin && (
-                <>
-                    {/* Backdrop for better focus */}
-                    <div className="fixed inset-0 bg-black/20 z-[4000]" onClick={() => setTempPin(null)} />
-
-                    {/* Modal Content */}
-                    <div className="fixed left-4 right-4 bottom-6 md:top-1/2 md:left-1/2 md:bottom-auto md:right-auto md:-translate-x-1/2 md:-translate-y-1/2 z-[5000] bg-white rounded-2xl shadow-2xl p-5 border border-gray-100 animate-in slide-in-from-bottom-5 fade-in duration-300">
-                        <div className="flex justify-between items-center mb-3">
-                            <h3 className="font-bold text-gray-800">이곳에 추억 남기기</h3>
+                    {/* Search Bar */}
+                    <div className="absolute top-3 left-12 w-[calc(100%-60px)] md:top-4 md:left-[60px] md:w-[300px] z-[1000] transition-all">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="장소 검색 (예: 서울역, Paris)"
+                                className="w-full pl-10 pr-4 py-2.5 rounded-full shadow-lg border border-gray-200 focus:outline-none focus:border-sage-green focus:ring-2 focus:ring-sage-green/20 text-gray-700 bg-white/95 backdrop-blur-sm transition-all"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            />
                             <button
-                                onClick={() => setTempPin(null)}
-                                className="text-gray-400 hover:text-gray-600"
+                                onClick={handleSearch}
+                                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-sage-green transition-colors"
                             >
-                                <X size={20} />
+                                <Search size={20} />
                             </button>
-                        </div>
-
-                        {/* Icon Selector */}
-                        <div className="flex gap-2 mb-2 overflow-x-auto pb-1 scrollbar-hide">
-                            {PIN_ICONS.map((icon) => (
+                            {searchQuery && (
                                 <button
-                                    key={icon}
-                                    onClick={() => setNewTitle(prev => icon + " " + prev)}
-                                    className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-sage-green/10 rounded-full text-lg transition-colors border border-gray-100"
-                                    title="아이콘 추가"
+                                    onClick={() => {
+                                        setSearchQuery('');
+                                        setSearchResults([]);
+                                    }}
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                                 >
-                                    {icon}
+                                    <X size={16} />
                                 </button>
-                            ))}
+                            )}
                         </div>
 
-                        <input
-                            type="text"
-                            placeholder="제목 (예: 파리에서의 아침)"
-                            className="w-full p-2 mb-2 border border-gray-200 rounded text-sm focus:outline-none focus:border-sage-green"
-                            value={newTitle}
-                            onChange={(e) => setNewTitle(e.target.value)}
-                            autoFocus
-                        />
-                        <textarea
-                            placeholder="어떤 기억이 있나요?"
-                            className="w-full p-2 mb-2 border border-gray-200 rounded text-sm h-20 resize-none focus:outline-none focus:border-sage-green"
-                            value={newMemo}
-                            onChange={(e) => setNewMemo(e.target.value)}
-                        />
-
-                        {/* Photo Preview Grid */}
-                        {newPhotos.length > 0 && (
-                            <div className="grid grid-cols-3 gap-2 mb-3">
-                                {newPhotos.map((photo, idx) => (
-                                    <div key={idx} className="relative rounded-lg overflow-hidden aspect-square group border border-gray-100">
-                                        <img src={photo} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
-                                        <button
-                                            onClick={() => handleRemovePhoto(idx)}
-                                            className="absolute top-0.5 right-0.5 bg-black/50 text-white p-0.5 rounded-full hover:bg-red-500 transition-colors"
-                                        >
-                                            <X size={12} />
-                                        </button>
+                        {/* Search Results Dropdown */}
+                        {searchResults.length > 0 && (
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden max-h-60 overflow-y-auto">
+                                {searchResults.map((result, idx) => (
+                                    <div
+                                        key={idx}
+                                        onClick={() => handleSelectLocation(result.lat, result.lon)}
+                                        className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-none flex items-start gap-3 transition-colors"
+                                    >
+                                        <MapPin size={16} className="text-sage-green mt-1 flex-shrink-0" />
+                                        <div>
+                                            <div className="text-sm font-medium text-gray-800">{result.display_name.split(',')[0]}</div>
+                                            <div className="text-xs text-gray-500 line-clamp-1">{result.display_name}</div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
                         )}
-
-                        {newPhotos.length < 3 && (
-                            <div
-                                onClick={() => fileInputRef.current?.click()}
-                                className="mb-3 p-3 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:border-sage-green/50 hover:text-sage-green cursor-pointer transition-colors"
-                            >
-                                <Camera size={20} className="mb-1" />
-                                <span className="text-xs">사진 추가하기 ({newPhotos.length}/3)</span>
-                            </div>
-                        )}
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            className="hidden"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                        />
-
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => setTempPin(null)}
-                                className="flex-1 py-3 text-sm text-gray-500 hover:bg-gray-100 rounded-xl font-medium"
-                            >
-                                취소
-                            </button>
-                            <button
-                                onClick={handleSave}
-                                disabled={!newTitle}
-                                className="flex-1 py-3 text-sm bg-sage-green text-white rounded-xl hover:bg-[#7D9389] disabled:opacity-50 font-bold transition-colors shadow-md"
-                            >
-                                기록하기
-                            </button>
-                        </div>
                     </div>
-                </>
-            )}
 
+
+                    {/* Existing Pins */}
+                    {pins.map((pin) => {
+                        // Decide which photo to show on map popup thumbnail
+                        const displayPhoto = (pin.photos && pin.photos.length > 0) ? pin.photos[0] : pin.photo;
+
+                        return (
+                            <Marker key={pin.id} position={[pin.lat, pin.lng]} icon={getPinIcon(pin.title)}>
+                                <Popup className="sage-popup">
+                                    <div className="p-2 min-w-[200px] max-w-[250px]">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h3 className="font-bold text-sage-green text-lg">{pin.title}</h3>
+                                            {onDeletePin && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        e.preventDefault();
+                                                        onDeletePin(pin.id);
+                                                    }}
+                                                    className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                                    title="삭제하기"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            )}
+                                        </div>
+                                        <p className="text-gray-600 text-sm mb-2 break-keep">
+                                            <Linkify>{pin.memo}</Linkify>
+                                        </p>
+                                        {displayPhoto && (
+                                            <div className="mb-2 rounded-lg overflow-hidden max-h-[150px] relative">
+                                                <img src={displayPhoto} alt="Memory" className="w-full h-full object-cover" />
+                                                {(pin.photos && pin.photos.length > 1) && (
+                                                    <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                                                        +{pin.photos.length - 1}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+                                        <div className="text-xs text-gray-400 text-right">{pin.date}</div>
+                                    </div>
+                                </Popup>
+                            </Marker>
+                        );
+                    })}
+
+                    {/* Temporary Pin Marker (Just the icon) */}
+                    {tempPin && (
+                        <Marker position={[tempPin.lat, tempPin.lng]} icon={tempIcon} />
+                    )}
+                </MapContainer>
+
+                {/* Creation Modal Overlay (Fixed Global Overlay) */}
+                {tempPin && (
+                    <>
+                        {/* Backdrop for better focus */}
+                        <div className="fixed inset-0 bg-black/20 z-[4000]" onClick={() => setTempPin(null)} />
+
+                        {/* Modal Content */}
+                        <div className="fixed left-4 right-4 bottom-6 md:top-1/2 md:left-1/2 md:bottom-auto md:right-auto md:-translate-x-1/2 md:-translate-y-1/2 z-[5000] bg-white rounded-2xl shadow-2xl p-5 border border-gray-100 animate-in slide-in-from-bottom-5 fade-in duration-300">
+                            <div className="flex justify-between items-center mb-3">
+                                <h3 className="font-bold text-gray-800">이곳에 추억 남기기</h3>
+                                <button
+                                    onClick={() => setTempPin(null)}
+                                    className="text-gray-400 hover:text-gray-600"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            {/* Icon Selector */}
+                            <div className="flex gap-2 mb-2 overflow-x-auto pb-1 scrollbar-hide">
+                                {PIN_ICONS.map((icon) => (
+                                    <button
+                                        key={icon}
+                                        onClick={() => setNewTitle(prev => icon + " " + prev)}
+                                        className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-sage-green/10 rounded-full text-lg transition-colors border border-gray-100"
+                                        title="아이콘 추가"
+                                    >
+                                        {icon}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <input
+                                type="text"
+                                placeholder="제목 (예: 파리에서의 아침)"
+                                className="w-full p-2 mb-2 border border-gray-200 rounded text-sm focus:outline-none focus:border-sage-green"
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}
+                                autoFocus
+                            />
+                            <textarea
+                                placeholder="어떤 기억이 있나요?"
+                                className="w-full p-2 mb-2 border border-gray-200 rounded text-sm h-20 resize-none focus:outline-none focus:border-sage-green"
+                                value={newMemo}
+                                onChange={(e) => setNewMemo(e.target.value)}
+                            />
+
+                            {/* Photo Preview Grid */}
+                            {newPhotos.length > 0 && (
+                                <div className="grid grid-cols-3 gap-2 mb-3">
+                                    {newPhotos.map((photo, idx) => (
+                                        <div key={idx} className="relative rounded-lg overflow-hidden aspect-square group border border-gray-100">
+                                            <img src={photo} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                                            <button
+                                                onClick={() => handleRemovePhoto(idx)}
+                                                className="absolute top-0.5 right-0.5 bg-black/50 text-white p-0.5 rounded-full hover:bg-red-500 transition-colors"
+                                            >
+                                                <X size={12} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {newPhotos.length < 3 && (
+                                <div
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="mb-3 p-3 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:border-sage-green/50 hover:text-sage-green cursor-pointer transition-colors"
+                                >
+                                    <Camera size={20} className="mb-1" />
+                                    <span className="text-xs">사진 추가하기 ({newPhotos.length}/3)</span>
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setTempPin(null)}
+                                    className="flex-1 py-3 text-sm text-gray-500 hover:bg-gray-100 rounded-xl font-medium"
+                                >
+                                    취소
+                                </button>
+                                <button
+                                    onClick={handleSave}
+                                    disabled={!newTitle}
+                                    className="flex-1 py-3 text-sm bg-sage-green text-white rounded-xl hover:bg-[#7D9389] disabled:opacity-50 font-bold transition-colors shadow-md"
+                                >
+                                    기록하기
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                )}
+
+
+            </div>
 
             {/* Creation Modal Overlay (Fixed Global Overlay) */}
             {tempPin && (
@@ -563,6 +566,6 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
 
             {/* Tooltip Overlay */}
 
-        </div >
+        </>
     );
 }
