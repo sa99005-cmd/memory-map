@@ -452,9 +452,9 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                     </div>
                 </div>
             )}
-        </MapContainer>
 
-            {/* Tooltip Overlay */ }
+
+            {/* Tooltip Overlay */}
 
         </div >
     );
