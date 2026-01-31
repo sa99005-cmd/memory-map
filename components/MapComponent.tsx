@@ -460,6 +460,107 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
             )}
 
 
+            {/* Creation Modal Overlay (Fixed Global Overlay) */}
+            {tempPin && (
+                <>
+                    {/* Backdrop for better focus */}
+                    <div className="fixed inset-0 bg-black/20 z-[4000]" onClick={() => setTempPin(null)} />
+
+                    {/* Modal Content */}
+                    <div className="fixed left-4 right-4 bottom-6 md:top-1/2 md:left-1/2 md:bottom-auto md:right-auto md:-translate-x-1/2 md:-translate-y-1/2 z-[5000] bg-white rounded-2xl shadow-2xl p-5 border border-gray-100 animate-in slide-in-from-bottom-5 fade-in duration-300">
+                        <div className="flex justify-between items-center mb-3">
+                            <h3 className="font-bold text-gray-800">이곳에 추억 남기기</h3>
+                            <button
+                                onClick={() => setTempPin(null)}
+                                className="text-gray-400 hover:text-gray-600"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Icon Selector */}
+                        <div className="flex gap-2 mb-2 overflow-x-auto pb-1 scrollbar-hide">
+                            {PIN_ICONS.map((icon) => (
+                                <button
+                                    key={icon}
+                                    onClick={() => setNewTitle(prev => icon + " " + prev)}
+                                    className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-sage-green/10 rounded-full text-lg transition-colors border border-gray-100"
+                                    title="아이콘 추가"
+                                >
+                                    {icon}
+                                </button>
+                            ))}
+                        </div>
+
+                        <input
+                            type="text"
+                            placeholder="제목 (예: 파리에서의 아침)"
+                            className="w-full p-2 mb-2 border border-gray-200 rounded text-sm focus:outline-none focus:border-sage-green"
+                            value={newTitle}
+                            onChange={(e) => setNewTitle(e.target.value)}
+                            autoFocus
+                        />
+                        <textarea
+                            placeholder="어떤 기억이 있나요?"
+                            className="w-full p-2 mb-2 border border-gray-200 rounded text-sm h-20 resize-none focus:outline-none focus:border-sage-green"
+                            value={newMemo}
+                            onChange={(e) => setNewMemo(e.target.value)}
+                        />
+
+                        {/* Photo Preview Grid */}
+                        {newPhotos.length > 0 && (
+                            <div className="grid grid-cols-3 gap-2 mb-3">
+                                {newPhotos.map((photo, idx) => (
+                                    <div key={idx} className="relative rounded-lg overflow-hidden aspect-square group border border-gray-100">
+                                        <img src={photo} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                                        <button
+                                            onClick={() => handleRemovePhoto(idx)}
+                                            className="absolute top-0.5 right-0.5 bg-black/50 text-white p-0.5 rounded-full hover:bg-red-500 transition-colors"
+                                        >
+                                            <X size={12} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {newPhotos.length < 3 && (
+                            <div
+                                onClick={() => fileInputRef.current?.click()}
+                                className="mb-3 p-3 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:border-sage-green/50 hover:text-sage-green cursor-pointer transition-colors"
+                            >
+                                <Camera size={20} className="mb-1" />
+                                <span className="text-xs">사진 추가하기 ({newPhotos.length}/3)</span>
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                        />
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setTempPin(null)}
+                                className="flex-1 py-3 text-sm text-gray-500 hover:bg-gray-100 rounded-xl font-medium"
+                            >
+                                취소
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={!newTitle}
+                                className="flex-1 py-3 text-sm bg-sage-green text-white rounded-xl hover:bg-[#7D9389] disabled:opacity-50 font-bold transition-colors shadow-md"
+                            >
+                                기록하기
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
+
+
             {/* Tooltip Overlay */}
 
         </div >
