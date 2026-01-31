@@ -226,7 +226,7 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                 <MapClickHandler onMapClick={handleMapClick} onLocate={setMapInstance} />
 
                 {/* Location Button */}
-                <div className="leaflet-bottom leaflet-right" style={{ marginBottom: '80px', marginRight: '10px', pointerEvents: 'auto', zIndex: 1000 }}>
+                <div className="leaflet-bottom leaflet-right" style={{ marginBottom: '20px', marginRight: '10px', pointerEvents: 'auto', zIndex: 1000 }}>
                     <div className="leaflet-control leaflet-bar">
                         <button
                             onClick={handleLocateMe}
