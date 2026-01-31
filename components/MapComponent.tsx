@@ -258,7 +258,7 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                 <MapController focusedPin={focusedPin} flyToLocation={flyToLocation} />
 
                 {/* Search Bar */}
-                <div className="absolute top-4 left-[60px] z-[1000] w-[300px] transition-all">
+                <div className="absolute top-3 left-12 w-[calc(100%-60px)] md:top-4 md:left-[60px] md:w-[300px] z-[1000] transition-all">
                     <div className="relative">
                         <input
                             type="text"
