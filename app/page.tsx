@@ -86,9 +86,9 @@ export default function Home() {
       </header>
 
       {/* Content Grid */}
-      <div className="flex-1 flex flex-col md:flex-row gap-6 h-[calc(100vh-200px)] min-h-[500px]">
-        {/* Map Area (70% on large screens) */}
-        <div className="flex-grow md:flex-[2.5] relative z-0">
+      <div className="flex-1 flex flex-col md:flex-row gap-6 md:h-[calc(100vh-200px)] h-auto">
+        {/* Map Area (Fixed height on mobile, flexible on desktop) */}
+        <div className="w-full h-[60vh] md:h-auto md:flex-[2.5] relative z-0 shadow-sm">
           <MapComponent
             pins={pins}
             onAddPin={handleAddPin}
