@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import "leaflet/dist/leaflet.css"; // Ensure map styles are loaded
 import "./globals.css";
 
 const geistSans = Geist({
