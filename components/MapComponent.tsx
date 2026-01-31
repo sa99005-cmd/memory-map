@@ -2,6 +2,7 @@
 
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapPin, Navigation, Map as MapIcon, X, Plus, Trash2, Image as ImageIcon, Crosshair, Camera, Search } from 'lucide-react';
@@ -104,6 +105,21 @@ function MapClickHandler({ onMapClick, onLocate }: { onMapClick: (lat: number, l
     });
     return null;
 }
+
+// Portal Component
+const Portal = ({ children }: { children: React.ReactNode }) => {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
+
+    if (!mounted) return null;
+
+    return createPortal(children, document.body);
+};
+
 
 export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, flyToLocation }: MapComponentProps) {
     const [tempPin, setTempPin] = useState<{ lat: number; lng: number } | null>(null);
@@ -361,14 +377,14 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                 </MapContainer>
             </div>
 
-            {/* Creation Modal Overlay (Fixed Global Overlay) */}
+            {/* Creation Modal Overlay (Moved to Portal) */}
             {tempPin && (
-                <>
+                <Portal>
                     {/* Backdrop for better focus */}
-                    <div className="fixed inset-0 bg-black/20 z-[4000]" onClick={() => setTempPin(null)} />
+                    <div className="fixed inset-0 bg-black/20 z-[99999]" style={{ pointerEvents: 'auto' }} onClick={() => setTempPin(null)} />
 
                     {/* Modal Content */}
-                    <div className="fixed left-4 right-4 bottom-6 md:top-1/2 md:left-1/2 md:bottom-auto md:right-auto md:-translate-x-1/2 md:-translate-y-1/2 z-[5000] bg-white rounded-2xl shadow-2xl p-5 border border-gray-100 animate-in slide-in-from-bottom-5 fade-in duration-300">
+                    <div className="fixed left-4 right-4 bottom-6 md:top-1/2 md:left-1/2 md:bottom-auto md:right-auto md:-translate-x-1/2 md:-translate-y-1/2 z-[100000] bg-white rounded-2xl shadow-2xl p-5 border border-gray-100 animate-in slide-in-from-bottom-5 fade-in duration-300">
                         <div className="flex justify-between items-center mb-3">
                             <h3 className="font-bold text-gray-800">이곳에 추억 남기기</h3>
                             <button
@@ -458,7 +474,7 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                             </button>
                         </div>
                     </div>
-                </>
+                </Portal>
             )}
 
 
