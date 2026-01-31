@@ -456,11 +456,12 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                             </button>
                         </div>
                     </div>
+                </>
             )}
 
 
-                    {/* Tooltip Overlay */}
+            {/* Tooltip Overlay */}
 
-                </div >
-            );
+        </div >
+    );
 }
