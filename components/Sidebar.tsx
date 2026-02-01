@@ -68,7 +68,7 @@ export default function Sidebar({ pins, onPinClick, onDeletePin, onCountryClick,
     };
 
     return (
-        <div className="w-full md:w-80 h-[300px] md:h-full bg-white md:rounded-2xl rounded-t-2xl shadow-lg flex flex-col border border-gray-100/50 overflow-hidden">
+        <div className="w-full md:w-80 h-[550px] md:h-full bg-white md:rounded-2xl rounded-t-2xl shadow-lg flex flex-col border border-gray-100/50 overflow-hidden">
             {/* Header */}
             <div className="p-5 bg-sage-green text-cream-white flex items-center justify-between shadow-sm">
                 <h2 className="font-bold text-lg flex items-center gap-2">
