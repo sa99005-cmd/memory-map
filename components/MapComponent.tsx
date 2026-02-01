@@ -14,6 +14,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 // Fix for default marker icons in Next.js
 const customIcon = L.divIcon({
     className: 'custom-pin-icon',
+    className: 'custom-pin-icon',
     html: renderToStaticMarkup(<MapPin size={24} color="#8DA399" fill="#F9F9F5" />),
     iconSize: [24, 24],
     iconAnchor: [12, 24],
@@ -243,8 +244,17 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                 >
                     <MapClickHandler onMapClick={handleMapClick} onLocate={setMapInstance} />
 
+                    <MapClickHandler onMapClick={handleMapClick} onLocate={setMapInstance} />
+
                     {/* Location Button */}
-                    <div className="leaflet-bottom leaflet-right" style={{ marginBottom: '20px', marginRight: '10px', pointerEvents: 'auto', zIndex: 1000 }}>
+                    <div
+                        className="leaflet-bottom leaflet-right"
+                        style={{ marginBottom: '20px', marginRight: '10px', pointerEvents: 'auto', zIndex: 1000 }}
+                        onClick={(e) => e.stopPropagation()}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onDoubleClick={(e) => e.stopPropagation()}
+                        onTouchStart={(e) => e.stopPropagation()}
+                    >
                         <div className="leaflet-control leaflet-bar">
                             <button
                                 onClick={handleLocateMe}
@@ -276,7 +286,13 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                     <MapController focusedPin={focusedPin} flyToLocation={flyToLocation} />
 
                     {/* Search Bar */}
-                    <div className="absolute top-3 left-12 w-[calc(100%-60px)] md:top-4 md:left-[60px] md:w-[300px] z-[1000] transition-all">
+                    <div
+                        className="absolute top-3 left-12 w-[calc(100%-60px)] md:top-4 md:left-[60px] md:w-[300px] z-[1000] transition-all"
+                        onClick={(e) => e.stopPropagation()}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onDoubleClick={(e) => e.stopPropagation()}
+                        onTouchStart={(e) => e.stopPropagation()}
+                    >
                         <div className="relative">
                             <input
                                 type="text"
