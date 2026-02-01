@@ -14,7 +14,6 @@ import { renderToStaticMarkup } from 'react-dom/server';
 // Fix for default marker icons in Next.js
 const customIcon = L.divIcon({
     className: 'custom-pin-icon',
-    className: 'custom-pin-icon',
     html: renderToStaticMarkup(<MapPin size={24} color="#8DA399" fill="#F9F9F5" />),
     iconSize: [24, 24],
     iconAnchor: [12, 24],
@@ -242,8 +241,6 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                     className="w-full h-full"
                     style={{ background: '#F9F9F5' }}
                 >
-                    <MapClickHandler onMapClick={handleMapClick} onLocate={setMapInstance} />
-
                     <MapClickHandler onMapClick={handleMapClick} onLocate={setMapInstance} />
 
                     {/* Location Button */}
