@@ -41,17 +41,7 @@ export default function Home() {
     setIsLoaded(true);
   }, []);
 
-  // Save to LocalStorage whenever pins change (only after initial load)
-  useEffect(() => {
-    if (isLoaded) {
-      try {
-        localStorage.setItem('memory-map-pins', JSON.stringify(pins));
-      } catch (error) {
-        console.error("Failed to save to local storage", error);
-        // Optional: Alert user if storage is full
-      }
-    }
-  }, [pins, isLoaded]);
+
 
   const handleCountryClick = (lat: number, lng: number, zoom: number) => {
     setFlyToLocation({ lat, lng, zoom });
@@ -60,11 +50,22 @@ export default function Home() {
   const handleAddPin = (newPin: Pin) => {
     const updatedPins = [newPin, ...pins];
     setPins(updatedPins);
+    try {
+      localStorage.setItem('memory-map-pins', JSON.stringify(updatedPins));
+    } catch (error) {
+      console.error("Failed to save pin:", error);
+      alert("저장에 실패했습니다. 저장 공간을 확인해주세요.");
+    }
   };
 
   const handleDeletePin = (id: number) => {
     const updatedPins = pins.filter(pin => pin.id !== id);
     setPins(updatedPins);
+    try {
+      localStorage.setItem('memory-map-pins', JSON.stringify(updatedPins));
+    } catch (error) {
+      console.error("Failed to save deletion:", error);
+    }
     if (focusedPin?.id === id) {
       setFocusedPin(null);
     }
