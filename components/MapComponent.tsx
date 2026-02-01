@@ -245,12 +245,13 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
 
                     {/* Location Button */}
                     <div
+                        ref={(ref) => {
+                            if (ref) {
+                                L.DomEvent.disableClickPropagation(ref);
+                            }
+                        }}
                         className="leaflet-bottom leaflet-right"
                         style={{ marginBottom: '20px', marginRight: '10px', pointerEvents: 'auto', zIndex: 1000 }}
-                        onClick={(e) => e.stopPropagation()}
-                        onMouseDown={(e) => e.stopPropagation()}
-                        onDoubleClick={(e) => e.stopPropagation()}
-                        onTouchStart={(e) => e.stopPropagation()}
                     >
                         <div className="leaflet-control leaflet-bar">
                             <button
@@ -284,11 +285,13 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
 
                     {/* Search Bar */}
                     <div
+                        ref={(ref) => {
+                            if (ref) {
+                                L.DomEvent.disableClickPropagation(ref);
+                                L.DomEvent.disableScrollPropagation(ref);
+                            }
+                        }}
                         className="absolute top-3 left-12 w-[calc(100%-60px)] md:top-4 md:left-[60px] md:w-[300px] z-[1000] transition-all"
-                        onClick={(e) => e.stopPropagation()}
-                        onMouseDown={(e) => e.stopPropagation()}
-                        onDoubleClick={(e) => e.stopPropagation()}
-                        onTouchStart={(e) => e.stopPropagation()}
                     >
                         <div className="relative">
                             <input
