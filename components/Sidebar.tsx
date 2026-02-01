@@ -1,12 +1,15 @@
 import { Pin } from './types';
-import { MapPin, Calendar, Search, Trash2, Plane } from 'lucide-react';
+import { MapPin, Calendar, Search, Trash2, Plane, Download, Upload } from 'lucide-react';
 import Link from 'next/link';
+import { useRef } from 'react';
 
 interface SidebarProps {
     pins: Pin[];
     onPinClick: (pin: Pin) => void;
     onDeletePin: (id: number) => void;
+
     onCountryClick: (lat: number, lng: number, zoom: number) => void;
+    onImportData: (data: Pin[]) => void;
 }
 
 const RECOMMENDED_COUNTRIES = [
@@ -17,11 +20,52 @@ const RECOMMENDED_COUNTRIES = [
     { name: '호주', lat: -25.2744, lng: 133.7751, zoom: 4 },
 ];
 
-export default function Sidebar({ pins, onPinClick, onDeletePin, onCountryClick }: SidebarProps) {
+export default function Sidebar({ pins, onPinClick, onDeletePin, onCountryClick, onImportData }: SidebarProps) {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     // Sort pins by date (newest first)
     const sortedPins = [...pins].sort((a, b) =>
         new Date(b.date).getTime() - new Date(a.date).getTime()
     );
+
+    const handleBackup = () => {
+        const dataStr = JSON.stringify(pins, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `memory-map-backup-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const handleRestoreClick = () => {
+        if (confirm("데이터를 복원하면 현재 기록에 추가/덮어쓰기 됩니다. 진행하시겠습니까?")) {
+            fileInputRef.current?.click();
+        }
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const parsed = JSON.parse(event.target?.result as string);
+                if (Array.isArray(parsed)) {
+                    onImportData(parsed);
+                    alert("데이터가 성공적으로 복원되었습니다!");
+                } else {
+                    alert("올바르지 않은 백업 파일입니다.");
+                }
+            } catch (err) {
+                alert("파일을 읽는 중 오류가 발생했습니다.");
+            }
+        };
+        reader.readAsText(file);
+        if (e.target) e.target.value = '';
+    };
 
     return (
         <div className="w-full md:w-80 h-[300px] md:h-full bg-white md:rounded-2xl rounded-t-2xl shadow-lg flex flex-col border border-gray-100/50 overflow-hidden">
@@ -124,6 +168,33 @@ export default function Sidebar({ pins, onPinClick, onDeletePin, onCountryClick 
                         </div>
                     ))
                 )}
+            </div>
+
+            {/* Backup/Restore Footer */}
+            <div className="p-3 border-t border-gray-100 bg-gray-50 flex gap-2">
+                <button
+                    onClick={handleBackup}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-600 hover:bg-sage-green hover:text-white hover:border-transparent transition-all shadow-sm"
+                    title="데이터를 파일로 저장"
+                >
+                    <Download size={14} />
+                    백업 저장
+                </button>
+                <button
+                    onClick={handleRestoreClick}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-600 hover:bg-sage-green hover:text-white hover:border-transparent transition-all shadow-sm"
+                    title="저장된 파일 불러오기"
+                >
+                    <Upload size={14} />
+                    복원하기
+                </button>
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept=".json"
+                    onChange={handleFileChange}
+                />
             </div>
         </div>
     );

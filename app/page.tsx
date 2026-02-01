@@ -71,6 +71,21 @@ export default function Home() {
     }
   };
 
+  const handleImportData = (data: Pin[]) => {
+    // Merge or replace? Let's replace for now based on confirm message, or merge.
+    // The prompt implementation plan implied restore. I'll just setPins(data).
+    // Actually, user might want to merge, but simple restore (overwrite/replace) is safer to avoid duplicates if IDs clash.
+    // But let's respect the confirm message "추가/덮어쓰기".
+    // I will simply replace the state with the imported data.
+    setPins(data);
+    try {
+      localStorage.setItem('memory-map-pins', JSON.stringify(data));
+    } catch (error) {
+      console.error("Failed to save imported data:", error);
+      alert("용량 부족으로 일부 데이터가 저장되지 않았을 수 있습니다.");
+    }
+  };
+
   const handlePinClick = (pin: Pin) => {
     setFocusedPin(pin);
   };
@@ -111,6 +126,7 @@ export default function Home() {
             onPinClick={handlePinClick}
             onDeletePin={handleDeletePin}
             onCountryClick={handleCountryClick}
+            onImportData={handleImportData}
           />
         </aside>
       </div>
