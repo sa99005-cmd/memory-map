@@ -44,7 +44,12 @@ export default function Home() {
   // Save to LocalStorage whenever pins change (only after initial load)
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem('memory-map-pins', JSON.stringify(pins));
+      try {
+        localStorage.setItem('memory-map-pins', JSON.stringify(pins));
+      } catch (error) {
+        console.error("Failed to save to local storage", error);
+        // Optional: Alert user if storage is full
+      }
     }
   }, [pins, isLoaded]);
 
