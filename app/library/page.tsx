@@ -15,20 +15,17 @@ export default function LibraryPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        const fetchPins = async () => {
+        const saved = localStorage.getItem('memory-map-pins');
+        if (saved) {
             try {
-                const res = await fetch('/api/pins');
-                if (res.ok) {
-                    const data = await res.json();
-                    setPins(data.sort((a: Pin, b: Pin) =>
-                        new Date(b.date).getTime() - new Date(a.date).getTime()
-                    ));
-                }
+                const parsed = JSON.parse(saved);
+                setPins(parsed.sort((a: Pin, b: Pin) =>
+                    new Date(b.date).getTime() - new Date(a.date).getTime()
+                ));
             } catch (error) {
-                console.error("Failed to fetch pins:", error);
+                console.error("Failed to parse pins:", error);
             }
-        };
-        fetchPins();
+        }
     }, []);
 
     const openModal = (pin: Pin) => {
@@ -59,7 +56,7 @@ export default function LibraryPage() {
         setCurrentPhotoIndex(0);
     };
 
-    const handleSaveEdit = async () => {
+    const handleSaveEdit = () => {
         if (!editForm || !selectedPin) return;
 
         // Ensure backward compatibility: set 'photo' to the first image if available
@@ -68,25 +65,22 @@ export default function LibraryPage() {
             photo: editForm.photos && editForm.photos.length > 0 ? editForm.photos[0] : undefined
         };
 
-        // Optimistic update
+        // Update state
         const updatedPins = pins.map(p => p.id === editForm.id ? updatedPin : p);
         setPins(updatedPins);
         setSelectedPin(updatedPin);
         setIsEditing(false);
 
+        // Save to LocalStorage
         try {
-            await fetch('/api/pins', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedPins),
-            });
+            localStorage.setItem('memory-map-pins', JSON.stringify(updatedPins));
         } catch (error) {
             console.error("Failed to save changes:", error);
             alert("저장에 실패했습니다.");
         }
     };
 
-    const handleDeletePin = async (id: number) => {
+    const handleDeletePin = (id: number) => {
         if (!confirm("정말로 이 추억을 삭제하시겠습니까?")) return;
 
         const updatedPins = pins.filter(p => p.id !== id);
@@ -96,16 +90,13 @@ export default function LibraryPage() {
             closeModal();
         }
 
+        // Save to LocalStorage
         try {
-            await fetch('/api/pins', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedPins),
-            });
+            localStorage.setItem('memory-map-pins', JSON.stringify(updatedPins));
         } catch (error) {
             console.error("Failed to delete pin:", error);
             alert("삭제에 실패했습니다.");
-            // Revert on error
+            // Revert on error (optional, but localstorage is sync usually)
             setPins(pins);
         }
     };

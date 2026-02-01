@@ -88,7 +88,7 @@ export default function Home() {
       {/* Content Grid */}
       <div className="flex-1 flex flex-col md:flex-row gap-6 md:h-[calc(100vh-200px)] h-auto">
         {/* Map Area (Fixed height on mobile, flexible on desktop) */}
-        <div className="w-full h-[60vh] md:h-auto md:flex-[2.5] relative z-0 shadow-sm">
+        <div className="w-full h-[60vh] md:h-auto md:flex-[2.5] relative shadow-sm">
           <MapComponent
             pins={pins}
             onAddPin={handleAddPin}
@@ -99,7 +99,7 @@ export default function Home() {
         </div>
 
         {/* Sidebar Area */}
-        <aside className="md:flex-1 h-full relative z-10">
+        <aside className="md:flex-1 h-full relative">
           <Sidebar
             pins={pins}
             onPinClick={handlePinClick}
