@@ -8,6 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import { MapPin, Navigation, Map as MapIcon, X, Plus, Trash2, Image as ImageIcon, Crosshair, Camera, Search } from 'lucide-react';
 import { Pin } from './types';
 import Linkify from './Linkify';
+import { compressImage } from './imageCompression';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 // Fix for default marker icons in Next.js
@@ -188,7 +189,7 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
         setNewPhotos([]);
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             if (newPhotos.length >= 3) {
@@ -196,13 +197,13 @@ export default function MapComponent({ pins, onAddPin, focusedPin, onDeletePin, 
                 return;
             }
 
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                if (reader.result) {
-                    setNewPhotos(prev => [...prev, reader.result as string]);
-                }
-            };
-            reader.readAsDataURL(file);
+            try {
+                const compressed = await compressImage(file);
+                setNewPhotos(prev => [...prev, compressed]);
+            } catch (error) {
+                console.error("Image compression failed:", error);
+                alert("이미지 처리 중 오류가 발생했습니다.");
+            }
         }
         // Reset input so the same file can be selected again if needed
         if (e.target) e.target.value = '';

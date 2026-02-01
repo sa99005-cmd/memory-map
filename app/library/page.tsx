@@ -3,8 +3,10 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Pin } from '@/components/types';
+
 import { MapPin, Calendar, ArrowLeft, Image as ImageIcon, Edit2, Save, X, Upload, Trash2, Check, Camera, Crosshair } from 'lucide-react';
 import Linkify from '../../components/Linkify';
+import { compressImage } from '../../components/imageCompression';
 
 export default function LibraryPage() {
     const [pins, setPins] = useState<Pin[]>([]);
@@ -101,7 +103,7 @@ export default function LibraryPage() {
         }
     };
 
-    const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file && editForm) {
             const currentPhotos = editForm.photos || [];
@@ -110,13 +112,15 @@ export default function LibraryPage() {
                 return;
             }
 
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const newPhotos = [...currentPhotos, reader.result as string];
+            try {
+                const compressed = await compressImage(file);
+                const newPhotos = [...currentPhotos, compressed];
                 setEditForm({ ...editForm, photos: newPhotos });
                 setCurrentPhotoIndex(newPhotos.length - 1); // Move to new photo
-            };
-            reader.readAsDataURL(file);
+            } catch (error) {
+                console.error("Image compression failed:", error);
+                alert("이미지 처리 중 오류가 발생했습니다.");
+            }
         }
     };
 
