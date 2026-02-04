@@ -1,14 +1,14 @@
 import React from 'react';
 
 interface LinkifyProps {
-    children: string;
+    text: string;
 }
 
-const Linkify: React.FC<LinkifyProps> = ({ children }) => {
-    if (!children) return null;
+const Linkify: React.FC<LinkifyProps> = ({ text }) => {
+    if (!text) return null;
 
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const parts = children.split(urlRegex);
+    const parts = text.split(urlRegex);
 
     return (
         <>
